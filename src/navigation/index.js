@@ -85,14 +85,19 @@ export default function AppNavigation() {
           ),
         }}
       />
-      <Tab.Screen
-        name="AddProperty"
-        component={AddProperty}
-        options={{
-          title: 'Add Property',
-          tabBarIcon: ({size}) => <IconButton icon="plus-circle" size={size} />,
-        }}
-      />
+      {isAuthenticated && (
+        <Tab.Screen
+          name="AddProperty"
+          component={AddProperty}
+          options={{
+            title: 'Add Property',
+            tabBarIcon: ({size}) => (
+              <IconButton icon="plus-circle" size={size} />
+            ),
+          }}
+        />
+      )}
+
       <Tab.Screen
         name="Favorite"
         component={Favorite}

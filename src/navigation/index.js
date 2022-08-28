@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useAuthContext} from '../context/AuthContext';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import auth from '@react-native-firebase/auth';
@@ -11,26 +11,25 @@ import Home from '../screens/Frontend/Home';
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigation() {
-  const {isAuthenticated, dispatch} = useAuthContext();
-  const [loading, setLoading] = useState(false);
-
+  const {isAuthenticated, isProcessing, dispatch} = useAuthContext();
   const handleLogout = () => {
-    setLoading(false);
+    dispatch({isProcessing: true});
     auth()
       .signOut()
       .then(() => {
         dispatch({type: 'LOGOUT'});
-        console.log('User signed out!');
       })
       .catch(error => {
         console.log('Logout Error', error.message);
         alert(error.message);
       })
       .finally(() => {
-        setLoading(true);
+        dispatch({isProcessing: false});
       });
   };
-  return (
+  return isProcessing ? (
+    <Loading />
+  ) : (
     <Stack.Navigator>
       {isAuthenticated === false ? (
         <Stack.Group screenOptions={{headerShown: false}}>
@@ -38,24 +37,18 @@ export default function AppNavigation() {
           <Stack.Screen name="Register" component={Register} />
         </Stack.Group>
       ) : (
-        <>
-          {loading ? (
-            <Loading />
-          ) : (
-            <Stack.Group
-              screenOptions={{
-                headerRight: () => (
-                  <IconButton
-                    icon="logout-variant"
-                    size={20}
-                    onPress={handleLogout}
-                  />
-                ),
-              }}>
-              <Stack.Screen name="Home" component={Home} />
-            </Stack.Group>
-          )}
-        </>
+        <Stack.Group
+          screenOptions={{
+            headerRight: () => (
+              <IconButton
+                icon="logout-variant"
+                size={20}
+                onPress={handleLogout}
+              />
+            ),
+          }}>
+          <Stack.Screen name="Home" component={Home} />
+        </Stack.Group>
       )}
     </Stack.Navigator>
   );

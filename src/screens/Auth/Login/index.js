@@ -33,8 +33,9 @@ export default function Login({navigation}) {
       setLoading(true);
       auth()
         .signInWithEmailAndPassword(email, password)
-        .then(() => {
-          dispatch({type: 'LOGIN'});
+        .then(userCredential => {
+          const userData = userCredential.user;
+          dispatch({type: 'LOGIN', payload: {user: userData}});
           console.log('User account created & signed in!');
         })
         .catch(error => {

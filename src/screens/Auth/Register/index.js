@@ -1,23 +1,36 @@
 import React, {useState} from 'react';
-import {View, ImageBackground, StyleSheet} from 'react-native';
+import {View, ImageBackground, StyleSheet, ScrollView} from 'react-native';
 import {Text} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import bgImg from '../../../assets/images/bg-img.jpg';
 import CustomButton from '../../../components/Button';
 import InputField from '../../../components/InputFiled';
 import {useAuthContext} from '../../../context/AuthContext';
+import firestore from '@react-native-firebase/firestore';
+import firebase from '@react-native-firebase/app';
 
 const initalState = {
+  firstName: '',
+  lastName: '',
+  userName: '',
+  phoneNumber: '',
   email: '',
   password: '',
+  confirmPassword: '',
 };
 
 const initalError = {
+  firstName: false,
+  lastName: false,
+  userName: false,
+  phoneNumber: false,
   email: false,
   password: false,
+  confirmPassword: false,
 };
+
 export default function Register({navigation}) {
-  const {dispatch} = useAuthContext();
+  const {isProcessing, dispatch} = useAuthContext();
   const [state, setState] = useState(initalState);
   const [error, setError] = useState(initalError);
   const [loading, setLoading] = useState(false);
@@ -28,32 +41,53 @@ export default function Register({navigation}) {
   };
 
   const handleSubmit = () => {
-    const {email, password} = state;
-    if (email && password) {
+    const {
+      firstName,
+      lastName,
+      userName,
+      phoneNumber,
+      email,
+      password,
+      confirmPassword,
+    } = state;
+    if (
+      firstName &&
+      lastName &&
+      phoneNumber &&
+      userName &&
+      email &&
+      password &&
+      confirmPassword
+    ) {
       if (password.length >= 6) {
-        setLoading(true);
-        auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then(() => {
-            dispatch({type: 'REGISTER'});
-            console.log('User account created & signed in!');
-          })
-          .catch(error => {
-            if (error.code === 'auth/email-already-in-use') {
-              console.log('That email address is already in use!');
-              alert('That email address is already in use!');
-            } else if (error.code === 'auth/invalid-email') {
-              console.log('That email address is invalid!');
-              alert('That email address is invalid!');
-              setError(e => ({...e, email: true}));
-            } else {
-              console.error(error);
-              alert(error);
-            }
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+        if (password === confirmPassword) {
+          setLoading(true);
+          auth()
+            .createUserWithEmailAndPassword(email, password)
+            .then(userCredential => {
+              console.log('User account created & signed in!');
+              updateProfile(userCredential.user);
+            })
+            .catch(error => {
+              if (error.code === 'auth/email-already-in-use') {
+                console.log('That email address is already in use!');
+                alert('That email address is already in use!');
+              } else if (error.code === 'auth/invalid-email') {
+                console.log('That email address is invalid!');
+                alert('That email address is invalid!');
+                setError(e => ({...e, email: true}));
+              } else {
+                console.error(error);
+                alert(error);
+              }
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        } else {
+          console.log('Password Not Match');
+          alert('Password Not Match');
+        }
       }
     } else {
       const errorArr = [];
@@ -69,51 +103,120 @@ export default function Register({navigation}) {
       alert(errorArr.join(', ') + ' field Required');
     }
   };
+
+  const updateProfile = async user => {
+    setLoading(true);
+    let profileData = {
+      firstName: state.firstName,
+      lastName: state.lastName,
+      userName: state.userName,
+      email: user.email,
+      userId: user.uid,
+      dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+    firestore()
+      .collection('users')
+      .doc(user.uid)
+      .set(profileData)
+      .then(() => {
+        console.log('User Profiel Updated');
+        dispatch({type: 'REGISTER', payload: {user: profileData}});
+      })
+      .catch(err => {
+        console.error(err);
+      })
+      .finally(() => {
+        dispatch({isProcessing: false});
+      });
+  };
   return (
     <ImageBackground
       source={bgImg}
       resizeMode="cover"
       style={styles.fullScreen}>
-      <View style={styles.container}>
-        <View style={styles.section}>
-          <Text variant="headlineLarge" style={styles.heading}>
-            Register
-          </Text>
-          <View style={styles.mb16}>
-            <InputField
-              label="Email"
-              error={error.email}
-              value={state.email}
-              onChangeText={handleChange('email')}
-              keyboardType="email-address"
-            />
-          </View>
-          <View style={styles.mb16}>
-            <InputField
-              label="Password"
-              error={error.password}
-              value={state.password}
-              onChangeText={handleChange('password')}
-            />
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.section}>
+            <Text variant="headlineLarge" style={styles.heading}>
+              Register
+            </Text>
+            <View style={styles.mb16}>
+              <InputField
+                label="First Name"
+                error={error.firstName}
+                value={state.firstName}
+                onChangeText={handleChange('firstName')}
+              />
+            </View>
+            <View style={styles.mb16}>
+              <InputField
+                label="Last Name"
+                error={error.lastName}
+                value={state.lastName}
+                onChangeText={handleChange('lastName')}
+              />
+            </View>
+            <View style={styles.mb16}>
+              <InputField
+                label="User Name"
+                error={error.userName}
+                value={state.userName}
+                onChangeText={handleChange('userName')}
+              />
+            </View>
+            <View style={styles.mb16}>
+              <InputField
+                label="Email"
+                error={error.email}
+                value={state.email}
+                onChangeText={handleChange('email')}
+                keyboardType="email-address"
+              />
+            </View>
+            <View style={styles.mb16}>
+              <InputField
+                label="Contact Number"
+                error={error.phoneNumber}
+                value={state.phoneNumber}
+                onChangeText={handleChange('phoneNumber')}
+                keyboardType="phone-pad"
+              />
+            </View>
+            <View style={styles.mb16}>
+              <InputField
+                label="Password"
+                error={error.password}
+                value={state.password}
+                onChangeText={handleChange('password')}
+              />
+            </View>
+            <View style={styles.mb16}>
+              <InputField
+                label="Password"
+                error={error.confirmPassword}
+                value={state.confirmPassword}
+                onChangeText={handleChange('confirmPassword')}
+              />
+            </View>
+            <View>
+              <CustomButton
+                icon="login-variant"
+                loading={loading}
+                disabled={loading}
+                onPress={handleSubmit}>
+                Register
+              </CustomButton>
+            </View>
           </View>
           <View>
             <CustomButton
-              icon="login-variant"
-              loading={loading}
-              disabled={loading}
-              onPress={handleSubmit}>
-              Register
+              mode="text"
+              onPress={() => navigation.navigate('Login')}>
+              Login Account
             </CustomButton>
           </View>
         </View>
-        <View>
-          <CustomButton
-            mode="text"
-            onPress={() => navigation.navigate('Login')}>
-            Login Account
-          </CustomButton>
-        </View>
-      </View>
+      </ScrollView>
     </ImageBackground>
   );
 }
@@ -138,5 +241,6 @@ const styles = StyleSheet.create({
   section: {
     flex: 1,
     justifyContent: 'center',
+    paddingVertical: 50,
   },
 });

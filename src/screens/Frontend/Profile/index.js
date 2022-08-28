@@ -3,16 +3,20 @@ import {View, Text, StyleSheet} from 'react-native';
 import CustomButton from '../../../components/Button';
 import {useAuthContext} from '../../../context/AuthContext';
 
-export default function Profile() {
+export default function Profile({navigation}) {
   const {user} = useAuthContext();
-
+  const handleNavigate = () => {
+    navigation.navigate('Login');
+  };
   return user ? (
     <View>
       <Text>Profile</Text>
     </View>
   ) : (
     <View style={[styles.container]}>
-      <CustomButton icon="login-variant">Login Account</CustomButton>
+      <CustomButton icon="login-variant" onPress={handleNavigate}>
+        Login Account
+      </CustomButton>
     </View>
   );
 }

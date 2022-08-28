@@ -4,7 +4,7 @@ import {StyleSheet, View} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-export default function Property(props) {
+export default function SingleProperty(props) {
   const handleNavigate = data => {
     console.log(data);
   };

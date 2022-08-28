@@ -9,10 +9,11 @@ import Login from '../screens/Auth/Login';
 import Register from '../screens/Auth/Register';
 import Home from '../screens/Frontend/Home';
 import Profile from '../screens/Frontend/Profile';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Property from '../screens/Frontend/Property';
 import Favorite from '../screens/Frontend/Fovorite';
+import PropertyDetail from '../screens/Frontend/PropertyDetail';
+import {NavigationContainer} from '@react-navigation/native';
+import AddProperty from '../screens/Frontend/AddProperty';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,12 +35,36 @@ export default function AppNavigation() {
         dispatch({isProcessing: false});
       });
   };
+
+  const AuthScreens = () => {
+    return (
+      <Stack.Navigator
+        initialRouteName="Profile"
+        screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+      </Stack.Navigator>
+    );
+  };
+
   return isProcessing ? (
     <Loading />
   ) : (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
+        headerTintColor: '#fff',
+        headerStyle: {
+          backgroundColor: '#f77d2b',
+        },
+        tabBarStyle: {
+          backgroundColor: '#f77d2b',
+        },
+
+        tabBarInactiveTintColor: '#000',
+        tabBarActiveTintColor: '#fff',
+
         headerRight: isAuthenticated
           ? () => <IconButton icon="logout" size={20} onPress={handleLogout} />
           : '',
@@ -48,29 +73,41 @@ export default function AppNavigation() {
         name="Home"
         component={Home}
         options={{
-          tabBarIcon: ({size}) => <Ionicons name="home-outline" size={size} />,
+          tabBarIcon: ({size}) => <IconButton icon="home" size={size} />,
         }}
       />
       <Tab.Screen
         name="Properties"
         component={Property}
         options={{
-          tabBarIcon: ({size}) => <FontAwesome name="building-o" size={size} />,
+          tabBarIcon: ({size}) => (
+            <IconButton icon="office-building" size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="AddProperty"
+        component={AddProperty}
+        options={{
+          title: 'Add Property',
+          tabBarIcon: ({size}) => <IconButton icon="plus-circle" size={size} />,
         }}
       />
       <Tab.Screen
         name="Favorite"
         component={Favorite}
         options={{
-          tabBarIcon: ({size}) => <Ionicons name="star-outline" size={size} />,
+          tabBarIcon: ({size}) => <IconButton icon="star" size={size} />,
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={Profile}
+        name="ProfileScreen"
+        component={AuthScreens}
         options={{
           headerShown: user ? true : false,
-          tabBarIcon: ({size}) => <FontAwesome name="user-o" size={size} />,
+          tabBarIcon: ({size}) => (
+            <IconButton icon="account" active size={size} />
+          ),
         }}
       />
     </Tab.Navigator>

@@ -1,8 +1,8 @@
 import React from 'react';
-import {View, StyleSheet, ScrollView, Image} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {Text} from 'react-native-paper';
 import ImgContainer from '../../../components/ImgContainer';
-import Property from '../../../components/Property';
+import SingleProperty from '../../../components/SingleProperty';
 import {useAuthContext} from '../../../context/AuthContext';
 
 export default function Home() {
@@ -109,7 +109,7 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.padding16}>
+      <ScrollView style={styles.padding12}>
         <View>
           <Text
             variant="headlineSmall"
@@ -118,11 +118,14 @@ export default function Home() {
           </Text>
         </View>
         <View>
+          <ImgContainer property={property} />
+        </View>
+        <View>
           {property.length > 0 &&
             property.map((data, index) => {
               return (
                 <View key={index} style={styles.card}>
-                  <Property {...data} />
+                  <SingleProperty {...data} />
                 </View>
               );
             })}
@@ -136,8 +139,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  padding16: {
-    padding: 16,
+  padding12: {
+    padding: 12,
   },
   pimaryColor: {
     color: '#f77d2b',

@@ -1,15 +1,17 @@
 import React from 'react';
-import {Button, Card, Title, Paragraph, Avatar, Text} from 'react-native-paper';
+import {Card, Title, Paragraph, Avatar, Text} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
+import {useNavigation} from '@react-navigation/native';
 export default function SingleProperty(props) {
-  const handleNavigate = data => {
-    console.log(data);
-  };
+  const navigation = useNavigation();
   return (
-    <Card style={styles.card} onPress={() => handleNavigate(props)}>
+    <Card
+      style={styles.card}
+      onPress={() => {
+        navigation.navigate('PropertyDetail');
+      }}>
       <View>
         <Card.Cover source={{uri: props.img}} style={styles.productImg} />
       </View>

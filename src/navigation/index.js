@@ -12,7 +12,6 @@ import Profile from '../screens/Frontend/Profile';
 import Property from '../screens/Frontend/Property';
 import Favorite from '../screens/Frontend/Fovorite';
 import PropertyDetail from '../screens/Frontend/PropertyDetail';
-import {NavigationContainer} from '@react-navigation/native';
 import AddProperty from '../screens/Frontend/AddProperty';
 
 const Stack = createNativeStackNavigator();
@@ -39,11 +38,40 @@ export default function AppNavigation() {
   const AuthScreens = () => {
     return (
       <Stack.Navigator
-        initialRouteName="Profile"
+        initialRouteName="Login"
         screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
+      </Stack.Navigator>
+    );
+  };
+
+  const PropertyScreens = () => {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerTintColor: '#fff',
+          headerStyle: {
+            backgroundColor: '#f77d2b',
+          },
+          headerRight: isAuthenticated
+            ? () => (
+                <IconButton
+                  icon="logout"
+                  size={20}
+                  iconColor="#fff"
+                  onPress={handleLogout}
+                />
+              )
+            : '',
+        }}
+        initialRouteName="Property">
+        <Stack.Screen name="Property" component={Property} />
+        <Stack.Screen
+          name="PropertyDetail"
+          // options={{title: 'Property Name'}}
+          component={PropertyDetail}
+        />
       </Stack.Navigator>
     );
   };
@@ -85,9 +113,9 @@ export default function AppNavigation() {
       />
       <Tab.Screen
         name="Properties"
-        component={Property}
+        component={PropertyScreens}
         options={{
-          tabBarStyle: {display: 'none'},
+          headerShown: false,
           tabBarIcon: ({size}) => (
             <IconButton icon="office-building" size={size} />
           ),
@@ -113,16 +141,28 @@ export default function AppNavigation() {
           tabBarIcon: ({size}) => <IconButton icon="star" size={size} />,
         }}
       />
-      <Tab.Screen
-        name="ProfileScreen"
-        component={AuthScreens}
-        options={{
-          headerShown: user ? true : false,
-          tabBarIcon: ({size}) => (
-            <IconButton icon="account" active size={size} />
-          ),
-        }}
-      />
+      {isAuthenticated ? (
+        <Tab.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            tabBarIcon: ({size}) => <IconButton icon="account" size={size} />,
+          }}
+        />
+      ) : (
+        <Tab.Screen
+          name="AuthScreens"
+          component={AuthScreens}
+          options={{
+            title: 'Login',
+            tabBarStyle: {display: 'none'},
+            headerShown: user ? true : false,
+            tabBarIcon: ({size}) => (
+              <IconButton icon="login" active size={size} />
+            ),
+          }}
+        />
+      )}
     </Tab.Navigator>
   );
 }

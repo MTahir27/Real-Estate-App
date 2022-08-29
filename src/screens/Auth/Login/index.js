@@ -6,6 +6,7 @@ import InputField from '../../../components/InputFiled';
 import CustomButton from '../../../components/Button';
 import auth from '@react-native-firebase/auth';
 import {useAuthContext} from '../../../context/AuthContext';
+import axios from 'axios';
 
 const initalState = {
   email: '',
@@ -17,7 +18,7 @@ const initalError = {
   password: false,
 };
 export default function Login({navigation}) {
-  const {dispatch} = useAuthContext();
+  const {user, dispatch} = useAuthContext();
   const [state, setState] = useState(initalState);
   const [error, setError] = useState(initalError);
   const [loading, setLoading] = useState(false);
@@ -34,9 +35,18 @@ export default function Login({navigation}) {
       auth()
         .signInWithEmailAndPassword(email, password)
         .then(userCredential => {
-          const userData = userCredential.user;
-          dispatch({type: 'LOGIN', payload: {user: userData}});
-          console.log('User account created & signed in!');
+          const firebaseId = userCredential.user.uid;
+          axios
+            .get(
+              `https://mt-real-estate-server.herokuapp.com/getUser/${firebaseId}`,
+            )
+            .then(response => {
+              dispatch({type: 'LOGIN', payload: {user: response.data}});
+              console.log('After Login Data', user);
+            })
+            .catch(error => {
+              console.log('Axios Error', error);
+            });
         })
         .catch(error => {
           if (error.code === 'auth/user-not-found') {

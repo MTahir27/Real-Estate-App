@@ -6,8 +6,7 @@ import bgImg from '../../../assets/images/bg-img.jpg';
 import CustomButton from '../../../components/Button';
 import InputField from '../../../components/InputFiled';
 import {useAuthContext} from '../../../context/AuthContext';
-import firestore from '@react-native-firebase/firestore';
-import firebase from '@react-native-firebase/app';
+import axios from 'axios';
 
 const initalState = {
   firstName: '',
@@ -30,7 +29,7 @@ const initalError = {
 };
 
 export default function Register({navigation}) {
-  const {isProcessing, dispatch} = useAuthContext();
+  const {isProcessing, user, dispatch} = useAuthContext();
   const [state, setState] = useState(initalState);
   const [error, setError] = useState(initalError);
   const [loading, setLoading] = useState(false);
@@ -65,8 +64,11 @@ export default function Register({navigation}) {
           auth()
             .createUserWithEmailAndPassword(email, password)
             .then(userCredential => {
-              console.log('User account created & signed in!');
-              updateProfile(userCredential.user);
+              if (userCredential.user) {
+                updateProfile(userCredential.user);
+              } else {
+                console.log('User Not Found Register');
+              }
             })
             .catch(error => {
               if (error.code === 'auth/email-already-in-use') {
@@ -104,23 +106,28 @@ export default function Register({navigation}) {
     }
   };
 
-  const updateProfile = async user => {
+  const updateProfile = user => {
     setLoading(true);
     let profileData = {
       firstName: state.firstName,
       lastName: state.lastName,
       userName: state.userName,
       email: user.email,
-      userId: user.uid,
-      dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
+      phoneNumber: state.phoneNumber,
+      firebaseId: user.uid,
     };
-    firestore()
-      .collection('users')
-      .doc(user.uid)
-      .set(profileData)
-      .then(() => {
-        console.log('User Profiel Updated');
-        dispatch({type: 'REGISTER', payload: {user: profileData}});
+    axios
+      .post(
+        'https://mt-real-estate-server.herokuapp.com/registerUser',
+        profileData,
+      )
+      .then(response => {
+        dispatch({
+          type: 'Register',
+          isProcessing: false,
+          payload: {user: response.data},
+        });
+        console.log('After Register Data', user);
       })
       .catch(err => {
         console.error(err);
@@ -192,7 +199,7 @@ export default function Register({navigation}) {
             </View>
             <View style={styles.mb16}>
               <InputField
-                label="Password"
+                label="Confirm Password"
                 error={error.confirmPassword}
                 value={state.confirmPassword}
                 onChangeText={handleChange('confirmPassword')}

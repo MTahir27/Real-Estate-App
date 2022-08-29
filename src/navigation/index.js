@@ -66,7 +66,14 @@ export default function AppNavigation() {
         tabBarActiveTintColor: '#fff',
 
         headerRight: isAuthenticated
-          ? () => <IconButton icon="logout" size={20} onPress={handleLogout} />
+          ? () => (
+              <IconButton
+                icon="logout"
+                size={20}
+                iconColor="#fff"
+                onPress={handleLogout}
+              />
+            )
           : '',
       }}>
       <Tab.Screen
@@ -80,6 +87,7 @@ export default function AppNavigation() {
         name="Properties"
         component={Property}
         options={{
+          tabBarStyle: {display: 'none'},
           tabBarIcon: ({size}) => (
             <IconButton icon="office-building" size={size} />
           ),

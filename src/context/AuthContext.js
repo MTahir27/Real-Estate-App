@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useReducer, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import axios from 'axios';
 
 const AuthContext = createContext();
 const initialState = {isAuthenticated: true, isProcessing: true};
@@ -34,10 +34,17 @@ export const AuthContextProvider = ({children}) => {
   useEffect(() => {
     auth().onAuthStateChanged(async user => {
       if (user) {
-        const userData = (
-          await firestore().collection('users').doc(user.uid).get()
-        ).data();
-        dispatch({type: 'LOGIN', payload: {user: userData}});
+        const firebaseId = user.uid;
+        axios
+          .get(
+            `https://mt-real-estate-server.herokuapp.com/getUser/${firebaseId}`,
+          )
+          .then(response => {
+            dispatch({type: 'LOGIN', payload: {user: response.data}});
+          })
+          .catch(error => {
+            console.log('Axios Error', error);
+          });
       } else {
         dispatch({type: 'LOGOUT'});
       }

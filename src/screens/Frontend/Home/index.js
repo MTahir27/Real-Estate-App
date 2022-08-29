@@ -7,7 +7,7 @@ import {useAuthContext} from '../../../context/AuthContext';
 
 export default function Home() {
   const {user} = useAuthContext();
-
+  console.log('Home Screen', user);
   const property = [
     {
       id: 1,

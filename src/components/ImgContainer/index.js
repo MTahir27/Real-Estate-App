@@ -1,8 +1,10 @@
 import React from 'react';
-import {View, Image, StyleSheet} from 'react-native';
+import {View, Image, StyleSheet, Pressable} from 'react-native';
 import {Text} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
 
 export default function ImgContainer(props) {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <Text
@@ -11,19 +13,28 @@ export default function ImgContainer(props) {
         Popular Properties
       </Text>
       <View style={styles.imgContainer}>
-        {props.property &&
-          props.property.length > 0 &&
-          props.property.map((data, index) => {
+        {props.property && props.property.length > 0 ? (
+          props.property.slice(0, 4).map((data, index) => {
             return (
-              <View key={index} style={styles.imgBox}>
+              <Pressable
+                key={index}
+                style={styles.imgBox}
+                onPress={() => {
+                  navigation.navigate('Properties', {
+                    screen: 'PropertyDetail',
+                  });
+                }}>
                 <Image
                   source={{uri: data.img}}
                   key={index}
                   style={styles.img}
                 />
-              </View>
+              </Pressable>
             );
-          })}
+          })
+        ) : (
+          <Text style={{textAlign: 'center'}}>No Feature property Found</Text>
+        )}
       </View>
     </View>
   );
@@ -48,7 +59,7 @@ const styles = StyleSheet.create({
   imgBox: {
     width: '50%',
     aspectRatio: 1 / 1,
-    padding: 8,
+    padding: 6,
     borderRadius: 12,
   },
   img: {

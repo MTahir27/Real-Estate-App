@@ -59,11 +59,7 @@ export default function AppNavigation() {
         }}
         initialRouteName="Property">
         <Stack.Screen name="Property" component={Property} />
-        <Stack.Screen
-          name="PropertyDetail"
-          // options={{title: 'Property Name'}}
-          component={PropertyDetail}
-        />
+        <Stack.Screen name="PropertyDetail" component={PropertyDetail} />
       </Stack.Navigator>
     );
   };

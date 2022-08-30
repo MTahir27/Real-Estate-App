@@ -18,10 +18,12 @@ export default function Home() {
             Wellcome to Real Estate
           </Text>
         </View>
-        <View>{/* <ImgContainer property={property} /> */}</View>
+        <View>
+          <ImgContainer property={property} />
+        </View>
         <View>
           {property.length > 0 ? (
-            property.map((data, index) => {
+            property.reverse().map((data, index) => {
               return (
                 <View key={index} style={styles.card}>
                   <SingleProperty {...data} />

@@ -2,106 +2,10 @@ import React, {useState} from 'react';
 import {View, ScrollView, StyleSheet} from 'react-native';
 import {Searchbar, Text} from 'react-native-paper';
 import SingleProperty from '../../../components/SingleProperty';
+import {usePropertyContext} from '../../../context/propertyContext';
 
 export default function Property() {
-  const property = [
-    {
-      id: 1,
-      name: 'Property Name',
-      descripton:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-      img: 'https://picsum.photos/700',
-      createdAt: '',
-      rooms: 2,
-      address: {
-        city: 'Faislabad',
-        province: 'Punjab',
-        country: 'Pakistan',
-      },
-      area: '',
-      info: {
-        bedrooms: 4,
-        bathRoomd: 4,
-        livingRooms: 4,
-        kitchen: 2,
-        diningRooms: 1,
-      },
-      brand: 'Propert Brand',
-      price: 120000,
-    },
-    {
-      id: 1,
-      name: 'Property Name',
-      descripton:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-      img: 'https://picsum.photos/700',
-      createdAt: '',
-      rooms: 2,
-      address: {
-        city: 'Faislabad',
-        province: 'Punjab',
-        country: 'Pakistan',
-      },
-      area: '',
-      info: {
-        bedrooms: 4,
-        bathRoomd: 4,
-        livingRooms: 4,
-        kitchen: 2,
-        diningRooms: 1,
-      },
-      brand: 'Propert Brand',
-      price: 120000,
-    },
-    {
-      id: 1,
-      name: 'Property Name',
-      descripton:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-      img: 'https://picsum.photos/700',
-      createdAt: '',
-      rooms: 2,
-      address: {
-        city: 'Faislabad',
-        province: 'Punjab',
-        country: 'Pakistan',
-      },
-      area: '',
-      info: {
-        bedrooms: 4,
-        bathRoomd: 4,
-        livingRooms: 4,
-        kitchen: 2,
-        diningRooms: 1,
-      },
-      brand: 'Propert Brand',
-      price: 120000,
-    },
-    {
-      id: 1,
-      name: 'Property Name',
-      descripton:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-      img: 'https://picsum.photos/700',
-      createdAt: '',
-      rooms: 2,
-      address: {
-        city: 'Faislabad',
-        province: 'Punjab',
-        country: 'Pakistan',
-      },
-      area: '',
-      info: {
-        bedrooms: 4,
-        bathRoomd: 4,
-        livingRooms: 4,
-        kitchen: 2,
-        diningRooms: 1,
-      },
-      brand: 'Propert Brand',
-      price: 120000,
-    },
-  ];
+  const {property} = usePropertyContext();
 
   const [searchQuery, setSearchQuery] = useState('');
   const onChangeSearch = query => setSearchQuery(query);
@@ -120,14 +24,17 @@ export default function Property() {
       <View>
         <ScrollView style={styles.padding12}>
           <View>
-            {property.length > 0 &&
-              property.map((data, index) => {
+            {property.length > 0 ? (
+              property.reverse().map((data, index) => {
                 return (
                   <View key={index} style={styles.card}>
                     <SingleProperty {...data} />
                   </View>
                 );
-              })}
+              })
+            ) : (
+              <Text style={{textAlign: 'center'}}>No Property Found</Text>
+            )}
           </View>
         </ScrollView>
       </View>

@@ -4,11 +4,7 @@ import {View, Text, Image, StyleSheet} from 'react-native';
 export default function Loading() {
   return (
     <View style={styles.container}>
-      <Image
-        source={{uri: 'asset:/images/logo/favicon.svg'}}
-        style={{width: 100, height: 100}}
-      />
-      <Text>Loading</Text>
+      <Text style={{color: '#fff'}}>Loading</Text>
     </View>
   );
 }
@@ -19,5 +15,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 12,
+    backgroundColor: '#f77d2b',
   },
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import {useAuthContext} from '../context/AuthContext';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import {IconButton} from 'react-native-paper';
 import Loading from '../screens/Frontend/Loading';
@@ -18,6 +19,7 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function AppNavigation() {
+  const navigation = useNavigation();
   const {isAuthenticated, isProcessing, user, dispatch} = useAuthContext();
   const handleLogout = () => {
     dispatch({isProcessing: true});
@@ -54,16 +56,6 @@ export default function AppNavigation() {
           headerStyle: {
             backgroundColor: '#f77d2b',
           },
-          headerRight: isAuthenticated
-            ? () => (
-                <IconButton
-                  icon="logout"
-                  size={20}
-                  iconColor="#fff"
-                  onPress={handleLogout}
-                />
-              )
-            : '',
         }}
         initialRouteName="Property">
         <Stack.Screen name="Property" component={Property} />

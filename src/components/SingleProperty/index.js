@@ -10,7 +10,7 @@ export default function SingleProperty(props) {
     <Card
       style={styles.card}
       onPress={() => {
-        navigation.navigate('PropertyDetail');
+        navigation.navigate('Properties', {screen: 'PropertyDetail'});
       }}>
       <View>
         <Card.Cover source={{uri: props.img}} style={styles.productImg} />

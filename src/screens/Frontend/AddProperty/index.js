@@ -1,17 +1,17 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {Text} from 'react-native-paper';
 import CustomButton from '../../../components/Button';
 import InputField from '../../../components/InputFiled';
-import firestore from '@react-native-firebase/firestore';
-import firebase from '@react-native-firebase/app';
 import {useAuthContext} from '../../../context/AuthContext';
+import axios from 'axios';
+import {useNavigation} from '@react-navigation/native';
+import {usePropertyContext} from '../../../context/propertyContext';
 
 const initalValue = {
-  id: '',
   name: '',
-  descrition: '',
-  img: 'https://source.unsplash.com/random/?property,house,apartment',
+  description: '',
+  img: '',
   price: '',
   rooms: '',
   bedrooms: '',
@@ -23,13 +23,11 @@ const initalValue = {
   city: '',
   province: '',
   country: '',
-  createdAt: '',
 };
 
 const initalError = {
-  id: false,
   name: false,
-  descrition: false,
+  description: false,
   img: false,
   price: false,
   rooms: false,
@@ -42,10 +40,14 @@ const initalError = {
   city: false,
   province: false,
   country: false,
-  createdAt: false,
 };
+
+const imgType = ['property', 'house', 'apartment', 'building', 'land'];
+
 export default function AddProperty() {
+  const navigation = useNavigation();
   const {user} = useAuthContext();
+  const {setProperty} = usePropertyContext();
   const [state, setState] = useState(initalValue);
   const [error, setError] = useState(initalError);
   const [loading, setLoading] = useState(false);
@@ -54,12 +56,10 @@ export default function AddProperty() {
     setState(s => ({...s, [prop]: value}));
     setError(e => ({...e, [prop]: false}));
   };
-
   const handleSubmit = () => {
     if (
       state.name &&
-      state.img &&
-      state.descrition &&
+      state.description &&
       state.price &&
       state.rooms &&
       state.bedrooms &&
@@ -72,7 +72,7 @@ export default function AddProperty() {
       state.province &&
       state.country
     ) {
-      addProperty();
+      addProperty(user[0]);
     } else {
       const errorArr = [];
       for (const key in state) {
@@ -88,22 +88,28 @@ export default function AddProperty() {
     }
   };
 
-  const addProperty = async () => {
+  const addProperty = user => {
     setLoading(true);
     const propertyData = {
       ...state,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      userId: user.uid,
+      img: `https://source.unsplash.com/random/?${
+        imgType[(Math.random() * imgType.length).toFixed(0)]
+      }`,
+      user: user,
     };
-    console.log(propertyData);
-    firestore()
-      .collection('property')
-      .doc(Math.floor(Date.now() / 1000))
-      .set(propertyData)
-      .then(() => {
-        console.log('Property Added');
+    axios
+      .post(
+        'https://mt-real-estate-server.herokuapp.com/addProperty',
+        propertyData,
+      )
+      .then(response => {
+        console.log('Property Added Successfully');
+        const property = response.data;
+        navigation.navigate('Home');
+        setProperty(p => ({...p, property}));
       })
       .catch(err => {
+        alert(err);
         console.error(err);
       })
       .finally(() => {
@@ -254,12 +260,12 @@ export default function AddProperty() {
             <View style={styles.inputField}>
               <InputField
                 label="Description"
-                error={error.descrition}
-                value={state.descrition}
+                error={error.description}
+                value={state.description}
                 mode="outlined"
                 multiline={true}
                 numberOfLines={4}
-                onChangeText={handleChange('descrition')}
+                onChangeText={handleChange('description')}
               />
             </View>
           </View>

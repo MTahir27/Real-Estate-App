@@ -18,17 +18,26 @@ export default function SingleProperty(props) {
       <Card.Content>
         <Title style={styles.text}>{props.name}</Title>
         <Paragraph numberOfLines={3} style={styles.descripton}>
-          {props.descripton}
+          {props.description}
         </Paragraph>
         <View style={styles.listRow}>
-          <Avatar.Text size={24} label="XD" color="white" />
+          <Avatar.Text
+            size={24}
+            label={`${props.user ? props.user.firstName.charAt(0) : 'U'}${
+              props.user ? props.user.lastName.charAt(0) : 'N'
+            }`}
+            color="white"
+          />
           <View style={styles.iconText}>
             <MaterialIcons name="location-city" size={24} />
-            <Text style={{fontWeight: '700'}}> {props.address.city}</Text>
+            <Text style={{fontWeight: '700'}}> {props.city}</Text>
           </View>
           <View style={styles.iconText}>
             <FontAwesome name="dollar" size={16} />
-            <Text style={{fontWeight: '700'}}> {props.price}</Text>
+            <Text style={{fontWeight: '700'}}>
+              {' '}
+              {props.price.$numberDecimal}
+            </Text>
           </View>
         </View>
       </Card.Content>

@@ -7,6 +7,7 @@ import {
 import {NavigationContainer} from '@react-navigation/native';
 import AppNavigation from './src/navigation';
 import {AuthContextProvider} from './src/context/AuthContext';
+import {PropertContextProvider} from './src/context/propertyContext';
 
 const theme = {
   ...DefaultTheme,
@@ -21,9 +22,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <AuthContextProvider>
-        <PaperProvider theme={theme}>
-          <AppNavigation />
-        </PaperProvider>
+        <PropertContextProvider>
+          <PaperProvider theme={theme}>
+            <AppNavigation />
+          </PaperProvider>
+        </PropertContextProvider>
       </AuthContextProvider>
     </NavigationContainer>
   );

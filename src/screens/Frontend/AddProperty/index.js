@@ -15,7 +15,7 @@ const initalValue = {
   price: '',
   rooms: '',
   bedrooms: '',
-  bathRoom: '',
+  bathRooms: '',
   livingRooms: '',
   kitchen: '',
   diningRooms: '',
@@ -32,7 +32,7 @@ const initalError = {
   price: false,
   rooms: false,
   bedrooms: false,
-  bathRoom: false,
+  bathRooms: false,
   livingRooms: false,
   kitchen: false,
   diningRooms: false,
@@ -63,7 +63,7 @@ export default function AddProperty() {
       state.price &&
       state.rooms &&
       state.bedrooms &&
-      state.bathRoom &&
+      state.bathRooms &&
       state.livingRooms &&
       state.kitchen &&
       state.diningRooms &&
@@ -162,10 +162,10 @@ export default function AddProperty() {
             <View style={styles.inputField}>
               <InputField
                 label="Bath Rooms"
-                error={error.bathRoom}
-                value={state.bathRoom}
+                error={error.bathRooms}
+                value={state.bathRooms}
                 mode="outlined"
-                onChangeText={handleChange('bathRoom')}
+                onChangeText={handleChange('bathRooms')}
                 keyboardType="number-pad"
               />
             </View>

@@ -4,13 +4,16 @@ import {StyleSheet, View} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import {usePropertyDetailContext} from '../../context/propertyDetailContext';
 export default function SingleProperty(props) {
   const navigation = useNavigation();
+  const {setPropertyDetail} = usePropertyDetailContext();
   return (
     <Card
       style={styles.card}
       onPress={() => {
         navigation.navigate('Properties', {screen: 'PropertyDetail'});
+        setPropertyDetail(props);
       }}>
       <View>
         <Card.Cover source={{uri: props.img}} style={styles.productImg} />

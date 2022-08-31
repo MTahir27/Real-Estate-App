@@ -2,9 +2,11 @@ import React from 'react';
 import {View, Image, StyleSheet, Pressable} from 'react-native';
 import {Text} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
+import {usePropertyDetailContext} from '../../context/propertyDetailContext';
 
 export default function ImgContainer(props) {
   const navigation = useNavigation();
+  const {setPropertyDetail} = usePropertyDetailContext();
   return (
     <View style={styles.container}>
       <Text
@@ -23,6 +25,7 @@ export default function ImgContainer(props) {
                   navigation.navigate('Properties', {
                     screen: 'PropertyDetail',
                   });
+                  setPropertyDetail(data);
                 }}>
                 <Image
                   source={{uri: data.img}}

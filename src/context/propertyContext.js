@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, {createContext, useContext, useEffect, useState} from 'react';
 
 const PropertyContext = createContext();
-export const PropertContextProvider = ({children}) => {
+export const PropertyContextProvider = ({children}) => {
   const [property, setProperty] = useState([]);
   useEffect(() => {
     axios

@@ -4,15 +4,18 @@ import {usePropertyDetailContext} from '../../../context/propertyDetailContext';
 import {View, ScrollView, Image, StyleSheet, Linking} from 'react-native';
 import Loading from '../Loading';
 import CustomButton from '../../../components/Button';
+import {useAuthContext} from '../../../context/AuthContext';
+import {useNavigation} from '@react-navigation/native';
 
 export default function PropertyDetail() {
+  const navigation = useNavigation();
   const {propertyDetail} = usePropertyDetailContext();
+  const {user} = useAuthContext();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (propertyDetail) {
       setLoading(false);
-      console.log(propertyDetail);
     }
   }, [propertyDetail]);
 
@@ -90,41 +93,59 @@ export default function PropertyDetail() {
             {propertyDetail.price.$numberDecimal}
           </Text>
         </View>
-        <View style={styles.mb16}>
-          <Text
-            variant="titleLarge"
-            style={[styles.textPrimaryColor, styles.fw700, styles.mb8]}>
-            Property Dealer Info
-          </Text>
-          <View>
+        {user ? (
+          <View style={styles.mb16}>
+            <Text
+              variant="titleLarge"
+              style={[styles.textPrimaryColor, styles.fw700, styles.mb8]}>
+              Property Dealer Info
+            </Text>
             <View>
-              <Text style={[styles.mb8]}>
-                <Text variant="titleMedium">Name:</Text>{' '}
-                {propertyDetail.user ? propertyDetail.user.firstName : ''}{' '}
-                {propertyDetail.user ? propertyDetail.user.lastName : ''}
-              </Text>
-              <Text style={[styles.mb8]}>
-                <Text variant="titleMedium">User Name:</Text>{' '}
-                {propertyDetail.user ? propertyDetail.user.userName : ''}
-              </Text>
-              <Text style={[styles.mb8]}>
-                <Text variant="titleMedium">Phone Number:</Text>{' '}
-                {propertyDetail.user ? propertyDetail.user.phoneNumber : ''}
-              </Text>
+              <View>
+                <Text style={[styles.mb8]}>
+                  <Text variant="titleMedium">Name:</Text>{' '}
+                  {propertyDetail.user ? propertyDetail.user.firstName : ''}{' '}
+                  {propertyDetail.user ? propertyDetail.user.lastName : ''}
+                </Text>
+                <Text style={[styles.mb8]}>
+                  <Text variant="titleMedium">User Name:</Text>{' '}
+                  {propertyDetail.user ? propertyDetail.user.userName : ''}
+                </Text>
+                <Text style={[styles.mb8]}>
+                  <Text variant="titleMedium">Phone Number:</Text>{' '}
+                  {propertyDetail.user ? propertyDetail.user.phoneNumber : ''}
+                </Text>
+                <CustomButton
+                  icon="phone-classic"
+                  onPress={() => {
+                    Linking.openURL(
+                      `tel: ${
+                        propertyDetail.user
+                          ? propertyDetail.user.phoneNumber
+                          : ''
+                      }`,
+                    );
+                  }}>
+                  Call Dealer
+                </CustomButton>
+              </View>
+            </View>
+          </View>
+        ) : (
+          <View>
+            <Text style={{textAlign: 'center', marginBottom: 16}}>
+              Login to Watch property Owner Info
+            </Text>
+            <View>
               <CustomButton
-                icon="phone-classic"
-                onPress={() => {
-                  Linking.openURL(
-                    `tel: ${
-                      propertyDetail.user ? propertyDetail.user.phoneNumber : ''
-                    }`,
-                  );
-                }}>
-                Call Dealer
+                onPress={() =>
+                  navigation.navigate('AuthScreens', {screen: 'Login'})
+                }>
+                Login Account
               </CustomButton>
             </View>
           </View>
-        </View>
+        )}
       </View>
     </ScrollView>
   );
